@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice</title>
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+</head>
+
+<body>
+    <!-- Song container -->
+    <div id="song-container">
+        <div id="navbar">
+            {% for song in songs %}
+            <!-- Adding a class 'song' to each song div -->
+            <div class="song" data-src="{% static song.audio_file.url %}">
+                <h3>{{song.title}}</h3>
+                <p>{{song.artist}}</p>
+            </div>
+
+            <audio id="audio-player" controls>
+                <source src="/media/{{ song.audio_file}}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            {% endfor %}
+        </div>
+        <div id="playlist">
+            <h1 style="color: white;" id="logo"><span style="color: red;">Boom</span>Ba</h1>
+            <p>Artist: The Weeknd</p>
+        </div>
+        <div id="image-container"><img src="{% static 'maxresdefault.jpg' %}"></div>
+    </div>
+    <!-- End of song container -->
+
+    <!-- Button container -->
+    <div id="button-container">
+        
+        <button id="play-pause-button">Play/Pause</button>
+        <button id="next-button">Next Song</button>
+        <button id="previous-button">Previous Song</button>
+    </div>
+    <!-- End Button container -->
+
+    <!-- JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const songs = document.querySelectorAll('.song');
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        const audioPlayer = document.getElementById('audio-player');
+
+        const hideAllSongs = () => {
+            songs.forEach(song => {
+                song.style.display = 'none';
+            });
+        };
+
+        const showCurrentSong = () => {
+            // hideAllSongs();
+            const currentSong = songs[currentSongIndex];
+            currentSong.style.display = 'block';
+
+            // Update the audio source to the current song
+            audioPlayer.src = currentSong.getAttribute('data-src');
+            
+            if (isPlaying) {
+                audioPlayer.play();
+            }
+        };
+
+        const playPause = () => {
+            if (isPlaying) {
+                audioPlayer.pause();
+            } else {
+                audioPlayer.play();
+            }
+            isPlaying = !isPlaying;
+        };
+
+        const stopCurrentSong = () => {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            isPlaying = false;
+        };
+
+        const nextSong = () => {
+            stopCurrentSong();
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            showCurrentSong();
+        };
+
+        const prevSong = () => {
+            stopCurrentSong();
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            showCurrentSong();
+        };
+
+        songs.forEach(song => {
+            // Add a click event listener to each song title
+            song.addEventListener('click', () => {
+                currentSongIndex = Array.from(songs).indexOf(song);
+                showCurrentSong();
+            });
+        });
+
+        document.getElementById('play-pause-button').addEventListener('click', playPause);
+        document.getElementById('next-button').addEventListener('click', nextSong);
+        document.getElementById('previous-button').addEventListener('click', prevSong);
+
+        showCurrentSong();
+    });
+</script>
+
+</body>
+
+</html>

@@ -1,6 +1,6 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-{% load static %}
 
 <head>
     <meta charset="UTF-8">
@@ -25,20 +25,29 @@
         <div id="song-container">
             {% for song in songs %}
             <div class="song">
-                <div class="song_info">
-                    <img src="/media/{{song.image}}">
+                <div class="top">
+                    <div class="left">
+
+                    </div>
                     <div class="titles">
                         <h1 id="title{{forloop.counter0}}">{{ song.title }}</h1>
                         <p id="artist{{forloop.counter0}}">Artist: {{ song.artist }}</p>
                     </div>
+
+                    <!--Image div-->
+                    <div class="songImg">
+                        <img src="/media/{{song.image}}">
+
+                    </div>
+                </div>
+                <div class="bottom">
+                    <audio controls>
+                        <source src="/media/{{ song.audio_file}}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+
                 </div>
 
-
-
-                <audio controls>
-                    <source src="/media/{{ song.audio_file}}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
             </div>
             {% endfor %}
         </div>
@@ -59,20 +68,20 @@
             const songs = document.querySelectorAll('.song');
             let currentSongIndex = 0;
             let isPlaying = false;
-    
-            
+
+
             const hideAllSongs = () => {
                 songs.forEach(song => {
                     song.style.display = 'none';
                 });
             };
-    
+
             // Function to show the current song
             const showCurrentSong = () => {
                 hideAllSongs();
                 songs[currentSongIndex].style.display = 'block';
             };
-    
+
             // Function to play or pause the current song
             const playPause = () => {
                 const audioPlayer = songs[currentSongIndex].querySelector('audio');
@@ -83,7 +92,7 @@
                 }
                 isPlaying = !isPlaying;
             };
-    
+
             // Function to stop the current song and reset its position
             const stopCurrentSong = () => {
                 const audioPlayer = songs[currentSongIndex].querySelector('audio');
@@ -91,48 +100,48 @@
                 audioPlayer.currentTime = 0; // Reset the playback position
                 isPlaying = false;
             };
-    
+
             // Function to play the next song
             const nextSong = () => {
                 // Stop the currently playing song
                 stopCurrentSong();
-    
+
                 // Move to the next song
                 currentSongIndex = (currentSongIndex + 1) % songs.length;
                 showCurrentSong();
-    
+
                 // Play the next song immediately
                 const nextAudioPlayer = songs[currentSongIndex].querySelector('audio');
                 nextAudioPlayer.play();
                 isPlaying = true;
             };
-    
+
             // Function to play the previous song
             const prevSong = () => {
                 // Stop the currently playing song
                 stopCurrentSong();
-    
+
                 // Move to the previous song
                 currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
                 showCurrentSong();
-    
+
                 // Play the previous song immediately
                 const prevAudioPlayer = songs[currentSongIndex].querySelector('audio');
                 prevAudioPlayer.play();
                 isPlaying = true;
             };
-    
+
             // Event listeners for buttons
             document.getElementById('play-pause-button').addEventListener('click', playPause);
             document.getElementById('next-button').addEventListener('click', nextSong);
             document.getElementById('prev-button').addEventListener('click', prevSong);
-    
+
             // Initial setup
             showCurrentSong();
         });
     </script>
-    
-    
+
+
 </body>
 
 </html>
