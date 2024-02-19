@@ -1,6 +1,8 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+
+{% load static %}
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
         integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="{% static 'main.css' %}">
 
 
     <style>
@@ -28,9 +32,12 @@
                 <div class="top">
                     <div class="left">
 
+
                     </div>
+
                     <div class="titles">
-                        <h1 id="title{{forloop.counter0}}">{{ song.title }}</h1>
+                        <h1 style="color: blue;" id="logo" ><span style="color: red;">Boom</span>Ba</h1>
+                        <h3 id="title{{forloop.counter0}}">{{ song.title }}</h3>
                         <p id="artist{{forloop.counter0}}">Artist: {{ song.artist }}</p>
                     </div>
 
@@ -41,6 +48,7 @@
                     </div>
                 </div>
                 <div class="bottom">
+                    <img src="/media/{{song.image}}">
                     <audio controls>
                         <source src="/media/{{ song.audio_file}}" type="audio/mpeg">
                         Your browser does not support the audio element.
@@ -50,12 +58,11 @@
 
             </div>
             {% endfor %}
-        </div>
 
-        <div id="button-container">
             <button id="prev-button">Previous Song</button>
             <button id="play-pause-button">Play/Pause</button>
             <button id="next-button">Next Song</button>
+
         </div>
 
     </div>
