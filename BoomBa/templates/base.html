@@ -22,130 +22,116 @@
     <div class="main-container">
 
 
-    <div id="song-container">
-        {% for song in songs %}
-        <div class="song">
-            <div class="song_info">
-                <img src="/media/{{song.image}}">
-                <div class="titles">
-                    <h1 id="title{{forloop.counter0}}">{{ song.title }}</h1>
-                    <p id="artist{{forloop.counter0}}">Artist: {{ song.artist }}</p>
+        <div id="song-container">
+            {% for song in songs %}
+            <div class="song">
+                <div class="song_info">
+                    <img src="/media/{{song.image}}">
+                    <div class="titles">
+                        <h1 id="title{{forloop.counter0}}">{{ song.title }}</h1>
+                        <p id="artist{{forloop.counter0}}">Artist: {{ song.artist }}</p>
+                    </div>
                 </div>
+
+
+
+                <audio controls>
+                    <source src="/media/{{ song.audio_file}}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
             </div>
-
-
-
-            <audio controls>
-                <source src="/media/{{ song.audio_file}}" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <div id="button-container">
-        <button id="prev-button">Previous Song</button>
-        <button id="play-pause-button">Play/Pause</button>
-        <button id="next-button">Next Song</button>
-    </div>
+        <div id="button-container">
+            <button id="prev-button">Previous Song</button>
+            <button id="play-pause-button">Play/Pause</button>
+            <button id="next-button">Next Song</button>
+        </div>
 
     </div>
 
     <a class="add-button" href="/add"><i class="fas fa-plus"></i></a>
 
-
-
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    const songs = document.querySelectorAll('.song');
-    let currentSongIndex = 0;
-    let currentAudioPlayer;
-
-    // Function to hide all songs
-    const hideAllSongs = () => {
-        songs.forEach(song => {
-            song.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function () {
+            const songs = document.querySelectorAll('.song');
+            let currentSongIndex = 0;
+            let isPlaying = false;
+    
+            // Function to hide all songs
+            const hideAllSongs = () => {
+                songs.forEach(song => {
+                    song.style.display = 'none';
+                });
+            };
+    
+            // Function to show the current song
+            const showCurrentSong = () => {
+                hideAllSongs();
+                songs[currentSongIndex].style.display = 'block';
+            };
+    
+            // Function to play or pause the current song
+            const playPause = () => {
+                const audioPlayer = songs[currentSongIndex].querySelector('audio');
+                if (isPlaying) {
+                    audioPlayer.pause();
+                } else {
+                    audioPlayer.play();
+                }
+                isPlaying = !isPlaying;
+            };
+    
+            // Function to stop the current song and reset its position
+            const stopCurrentSong = () => {
+                const audioPlayer = songs[currentSongIndex].querySelector('audio');
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0; // Reset the playback position
+                isPlaying = false;
+            };
+    
+            // Function to play the next song
+            const nextSong = () => {
+                // Stop the currently playing song
+                stopCurrentSong();
+    
+                // Move to the next song
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                showCurrentSong();
+    
+                // Play the next song immediately
+                const nextAudioPlayer = songs[currentSongIndex].querySelector('audio');
+                nextAudioPlayer.play();
+                isPlaying = true;
+            };
+    
+            // Function to play the previous song
+            const prevSong = () => {
+                // Stop the currently playing song
+                stopCurrentSong();
+    
+                // Move to the previous song
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                showCurrentSong();
+    
+                // Play the previous song immediately
+                const prevAudioPlayer = songs[currentSongIndex].querySelector('audio');
+                prevAudioPlayer.play();
+                isPlaying = true;
+            };
+    
+            // Event listeners for buttons
+            document.getElementById('play-pause-button').addEventListener('click', playPause);
+            document.getElementById('next-button').addEventListener('click', nextSong);
+            document.getElementById('prev-button').addEventListener('click', prevSong);
+    
+            // Initial setup
+            showCurrentSong();
         });
-    };
-
-    // Function to show the current song
-    const showCurrentSong = () => {
-        hideAllSongs();
-        songs[currentSongIndex].style.display = 'block';
-    };
-
-    // Function to play or pause the current song
-    const playPause = () => {
-        const audioPlayer = songs[currentSongIndex].querySelector('.audio-player');
-        if (audioPlayer.paused) {
-            audioPlayer.play();
-        } else {
-            audioPlayer.pause();
-        }
-    };
-
-    // Function to stop the current song and reset its position
-    const stopCurrentSong = () => {
-        if (currentAudioPlayer) {
-            currentAudioPlayer.pause();
-            currentAudioPlayer.currentTime = 0; // Reset the playback position
-        }
-    };
-
-    // Function to play the next song
-    const nextSong = () => {
-        // Stop the currently playing song
-        stopCurrentSong();
-
-        // Move to the next song
-        currentSongIndex = (currentSongIndex + 1) % songs.length;
-        showCurrentSong();
-
-        // Play the next song immediately
-        const nextAudioPlayer = songs[currentSongIndex].querySelector('.audio-player');
-        nextAudioPlayer.play();
-        currentAudioPlayer = nextAudioPlayer;
-    };
-
-    // Function to play the previous song
-    const prevSong = () => {
-        // Stop the currently playing song
-        stopCurrentSong();
-
-        // Move to the previous song
-        currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-        showCurrentSong();
-
-        // Play the previous song immediately
-        const prevAudioPlayer = songs[currentSongIndex].querySelector('.audio-player');
-        prevAudioPlayer.play();
-        currentAudioPlayer = prevAudioPlayer;
-    };
-
-    // Function to handle seeking within the audio track
-    const seekTo = (event) => {
-        const progressDiv = event.currentTarget;
-        const audioPlayer = progressDiv.parentElement.querySelector('.audio-player');
-        const seekPosition = (event.offsetX / progressDiv.clientWidth) * audioPlayer.duration;
-        audioPlayer.currentTime = seekPosition;
-    };
-
-    // Event listeners for buttons
-    document.getElementById('play-pause-button').addEventListener('click', playPause);
-    document.getElementById('next-button').addEventListener('click', nextSong);
-    document.getElementById('prev-button').addEventListener('click', prevSong);
-
-    // Event listener for seeking within the audio track
-    document.querySelectorAll('.progress_div').forEach(progressDiv => {
-        progressDiv.addEventListener('click', seekTo);
-    });
-
-    // Initial setup
-    showCurrentSong();
-});
-
     </script>
+    
+    
 </body>
 
 </html>
